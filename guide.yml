@@ -1,0 +1,71 @@
+= DATABASE =
+Tables:
+- accounts
+  - id: unique identifier
+  - username: credentials for username-password login
+  - password: credentials for username-password login 
+  - email: credentials for google login
+- sessions
+  - id: unique identifier
+  - user_id: account associated with the session
+- weather_log
+  - id: unique identifier
+  - user_id: account associated with the log
+  - log: weather log details
+
+
+= SERVER =
+POST /signup
+- signup endpoint for first time users; generates an account in the database
+- Body:
+  - email OPTIONAL: standalone for google login
+  - username OPTIONAL: must be paired with password
+  - password OPTIONAL: must be paired with username
+- Return:
+  - success: TRUE or FALSE
+  - user_id: id of the account generated
+
+POST /login
+- login endpoint; generates a session in the database
+- Body: (either email or username-password pair is required)
+  - email OPTIONAL: standalone for google login
+  - username OPTIONAL: must be paired with password
+  - password OPTIONAL: must be paired with username
+- Return:
+  - success: TRUE or FALSE
+  - user_id: id of the account associated with the credentials
+  - session_id: id of the session generated
+
+POST /logout
+- logout endpoint; deletes the session of the account in the database
+- Body: (either user_id or session_id is required)
+  - user_id OPTIONAL: standalone
+  - session_id OPTIONAL: standalone
+- Return:
+  - success: TRUE or FALSE
+
+POST /log
+- weather log endpoint for saving current weather; generates a log in the database
+- Body:
+  - user_id REQUIRED: id of the account associated with the log
+  - log REQUIRED: weather log details
+- Return:
+  - success: TRUE or FALSE
+  - log_id: id of the log generated
+
+GET /logs/:user_id
+- weather log endpoint for fetching logs; returns the logs of a specific user
+- Body:
+  - user_id REQUIRED: id of the account associated with the log
+- Return:
+  - success: TRUE or FALSE
+  - logs: list of logs associated with the account
+
+GET /session/:session_id
+- session endpoint for login; checks if session still exists in the database
+- Body:
+  - session_id REQUIRED: id of the session to check in the database
+- Return:
+  - success: TRUE or FALSE
+  - user_id: id of the account associated with the session
+  - session_id: id of the session sent as parameter
